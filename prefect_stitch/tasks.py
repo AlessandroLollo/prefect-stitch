@@ -2,9 +2,11 @@
 Collection of tasks to interact with Stitch APIs.
 """
 
-from prefect_stitch.utils import StitchClient
-from prefect import task
 from typing import Dict
+
+from prefect import task
+
+from prefect_stitch.utils import StitchClient
 
 
 @task
@@ -14,8 +16,9 @@ def start_replication_job(access_token: str, source_id: int) -> Dict:
 
     Args:
         access_token: API access token that will be used to authenticate API calls.
-        source_id: integer identifier of the source that will be used in the replication job.
-    
+        source_id: integer identifier of the source that will
+            be used in the replication job.
+
     Returns:
         Replication job API JSON response.
     """

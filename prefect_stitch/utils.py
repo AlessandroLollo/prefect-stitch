@@ -2,10 +2,12 @@
 Collection of utils to interact with Stitch APIs.
 """
 
-from prefect_stitch.exceptions import StitchAPIFailureException
+from typing import Dict, Optional
 
 from requests import Session
-from typing import Dict, Optional
+
+from prefect_stitch.exceptions import StitchAPIFailureException
+
 
 class StitchClient:
     """
@@ -29,7 +31,6 @@ class StitchClient:
                 authenticate API calls.
         """
         self.access_token = access_token
-    
 
     def __get_base_url(self) -> str:
         """
@@ -39,21 +40,19 @@ class StitchClient:
             Stitch base URL.
         """
         return f"{self.__STITCH_API_URL}/{self.__STITCH_API_VERSION}"
-    
-    
+
     def __get_replication_job_url(self, source_id: int) -> str:
         """
-        Returns the [Replication Job API URL](https://www.stitchdata.com/docs/developers/stitch-connect/api#replication-jobs).
+        Returns the Replication Job API URL.
 
         Args:
             source_id: The integer identifier of the source that
                 will be used in the replication job.
-        
+
         Returns:
             Replication Job API URL.
         """
         return f"{self.__get_base_url()}/sources/{source_id}/sync"
-    
 
     def __get_session(self) -> Session:
         """
@@ -65,43 +64,44 @@ class StitchClient:
         session = Session()
         session.headers = {
             "Authorization": f"Bearer {self.access_token}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         return session
-    
 
-    def __call_api(self, api_url: str, params: Optional[Dict], http_method: str) -> Dict:
+    def __call_api(
+        self, api_url: str, params: Optional[Dict], http_method: str
+    ) -> Dict:
         """
         Make an API call to the URL using the specified parameters and HTTP method.
 
         Args:
             api_url: The URL of the API to call.
             params: Optional parameters to pass to the API call.
-            http_method: String representing the HTTP method to use to make the API call.
-        
+            http_method: String representing the HTTP method
+                to use to make the API call.
+
         Raises:
             `StitchAPIFailureException` if the response code is not 200.
             `StitchAPIFailureException` if the response contains an error payload.
-        
+
         Returns:
             The API JSON response.
         """
-        
+
         session = self.__get_session()
         http_fn = session.get if http_method == "GET" else session.post
         with http_fn(url=api_url, params=params) as response:
             if response.status_code != 200:
                 raise StitchAPIFailureException(response.reason)
-            
+
             data = response.json()
 
             if "error" in data:
                 err = data["error"]["message"]
                 raise StitchAPIFailureException(err)
-        
+
         return data
-    
 
     def start_replication_job(self, source_id: int) -> Dict:
         """
@@ -110,11 +110,11 @@ class StitchClient:
         Args:
             source_id: The integer identifier of the source that
                 will be used in the replication job.
-        
+
         Returns:
             The replication job API JSON response.
         """
         return self.__call_api(
             api_url=self.__get_replication_job_url(source_id=source_id),
-            http_method="POST"
+            http_method="POST",
         )
