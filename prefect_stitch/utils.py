@@ -92,14 +92,17 @@ class StitchClient:
         session = self.__get_session()
         http_fn = session.get if http_method == "GET" else session.post
         with http_fn(url=api_url, params=params) as response:
-            if response.status_code != 200:
-                raise StitchAPIFailureException(response.reason)
+            if response.status_code not in [200, 400]:
+                err = f"There was an error while calling Stitch API: {response.reason}"
+                raise StitchAPIFailureException(err)
 
             data = response.json()
 
             if "error" in data:
                 err = data["error"]["message"]
-                raise StitchAPIFailureException(err)
+                raise StitchAPIFailureException(
+                    f"Stitch API responded with error: {err}"
+                )
 
         return data
 
@@ -114,7 +117,11 @@ class StitchClient:
         Returns:
             The replication job API JSON response.
         """
+        if source_id is None:
+            msg = "To start a replication job, please provide the the source identifier"
+            raise StitchAPIFailureException(msg)
         return self.__call_api(
             api_url=self.__get_replication_job_url(source_id=source_id),
+            params=None,
             http_method="POST",
         )
