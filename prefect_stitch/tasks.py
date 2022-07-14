@@ -1,5 +1,8 @@
 """
 Collection of tasks to interact with Stitch APIs.
+In order to use Stitch APIs, you'll need to have
+a Stitch Unlimited Plan or higher.
+For further information, checkout [Stitch pricing](https://www.stitchdata.com/pricing/).
 """
 
 from typing import Dict
