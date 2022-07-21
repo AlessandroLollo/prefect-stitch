@@ -21,7 +21,7 @@ def test_run_without_source_id_raises():
     msg_match = "To start a replication job, please provide the the source identifier"
 
     with pytest.raises(StitchAPIFailureException, match=msg_match):
-        test_flow().result().result()
+        test_flow()
 
 
 @responses.activate
@@ -36,7 +36,7 @@ def test_run_with_not_ok_status_code_raises():
     msg_match = "There was an error while calling Stitch API"
     with pytest.raises(StitchAPIFailureException, match=msg_match):
 
-        test_flow().result().result()
+        test_flow()
 
 
 @responses.activate
@@ -60,7 +60,7 @@ def test_run_with_invalid_source_raises():
 
     msg_match = "Stitch API responded with error: Unable to locate source"
     with pytest.raises(StitchAPIFailureException, match=msg_match):
-        test_flow().result().result()
+        test_flow()
 
 
 @responses.activate
@@ -82,7 +82,7 @@ def test_run_with_deleted_source_raises():
     msg_match = "Stitch API responded with error: Integration is deleted."
 
     with pytest.raises(StitchAPIFailureException, match=msg_match):
-        test_flow().result().result()
+        test_flow()
 
 
 @responses.activate
@@ -107,7 +107,7 @@ def test_run_already_running_job_raises():
     msg_match = "Stitch API responded with error: Did not create job for client-id"
 
     with pytest.raises(StitchAPIFailureException, match=msg_match):
-        test_flow().result().result()
+        test_flow()
 
 
 @responses.activate
@@ -121,7 +121,7 @@ def test_run_with_valid_source_check_auth_headers():
         method=responses.POST, url=api_url, status=200, json={"job_name": "foo"}
     )
 
-    test_flow().result().result()
+    test_flow()
 
     assert responses.calls[0].request.headers["Authorization"] == "Bearer abc"
 
@@ -137,6 +137,6 @@ def test_run_success():
         method=responses.POST, url=api_url, status=200, json={"job_name": "foo"}
     )
 
-    result = test_flow().result().result()
+    result = test_flow()
 
     assert result == {"job_name": "foo"}
