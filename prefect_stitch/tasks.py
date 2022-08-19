@@ -9,11 +9,12 @@ from typing import Dict
 
 from prefect import task
 
-from prefect_stitch.utils import StitchClient
+from prefect_stitch.credentials import StitchCredentials
+from prefect_stitch.stitch_client import StitchClient
 
 
 @task
-def start_replication_job(access_token: str, source_id: int) -> Dict:
+def start_replication_job(credentials: StitchCredentials, source_id: int) -> Dict:
     """
     This task starts a new Stitch replication job using the provided source.
 
@@ -25,5 +26,5 @@ def start_replication_job(access_token: str, source_id: int) -> Dict:
     Returns:
         Replication job API JSON response.
     """
-    stitch_client = StitchClient(access_token=access_token)
+    stitch_client = StitchClient(credentials=credentials)
     return stitch_client.start_replication_job(source_id=source_id)
