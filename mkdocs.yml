@@ -48,5 +48,7 @@ plugins:
 
 nav:
     - Home: index.md
+    - Credentials: credentials.md
+    - Client: client.md
     - Tasks: tasks.md
 

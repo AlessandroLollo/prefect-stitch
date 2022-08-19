@@ -1,5 +1,5 @@
 """
-Collection of utils to interact with Stitch APIs.
+An object that can be used to interact with Stitch APIs.
 """
 
 from typing import Dict, Optional
@@ -12,8 +12,12 @@ from prefect_stitch.exceptions import StitchAPIFailureException
 
 class StitchClient:
     """
-    Class that represents a Stitch client that can be used to interact
-    with Stitch APIs.
+    Create a client that can be used to interact with Stitch APIs
+    using the provided access token to authenticate API calls.
+
+    Args:
+        credentials: access token that will be used to
+            authenticate API calls.
     """
 
     # Stitch API base url
@@ -23,14 +27,6 @@ class StitchClient:
     __STITCH_API_VERSION = "v4"
 
     def __init__(self, credentials: StitchCredentials) -> None:
-        """
-        Create a client that can be used to interact with Stitch APIs
-        using the provided access token to authenticate API calls.
-
-        Args:
-            access_token: access token that will be used to
-                authenticate API calls.
-        """
         self.credentials = credentials
 
     def __get_base_url(self) -> str:
