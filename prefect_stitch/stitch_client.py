@@ -1,18 +1,23 @@
 """
-Collection of utils to interact with Stitch APIs.
+An object that can be used to interact with Stitch APIs.
 """
 
 from typing import Dict, Optional
 
 from requests import Session
 
+from prefect_stitch.credentials import StitchCredentials
 from prefect_stitch.exceptions import StitchAPIFailureException
 
 
 class StitchClient:
     """
-    Class that represents a Stitch client that can be used to interact
-    with Stitch APIs.
+    Create a client that can be used to interact with Stitch APIs
+    using the provided access token to authenticate API calls.
+
+    Args:
+        credentials: access token that will be used to
+            authenticate API calls.
     """
 
     # Stitch API base url
@@ -21,16 +26,8 @@ class StitchClient:
     # Stitch API version
     __STITCH_API_VERSION = "v4"
 
-    def __init__(self, access_token: str) -> None:
-        """
-        Create a client that can be used to interact with Stitch APIs
-        using the provided access token to authenticate API calls.
-
-        Args:
-            access_token: access token that will be used to
-                authenticate API calls.
-        """
-        self.access_token = access_token
+    def __init__(self, credentials: StitchCredentials) -> None:
+        self.credentials = credentials
 
     def __get_base_url(self) -> str:
         """
@@ -61,9 +58,10 @@ class StitchClient:
         Returns:
             Session object configured with the proper headers.
         """
+        access_token = self.credentials.access_token.get_secret_value()
         session = Session()
         session.headers = {
-            "Authorization": f"Bearer {self.access_token}",
+            "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
         }
 
