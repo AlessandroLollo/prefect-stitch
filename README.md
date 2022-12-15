@@ -25,7 +25,9 @@ pip install prefect-stitch
 ### Write and run a flow
 
 ```python
+from pydantic import SecretStr
 from prefect import flow
+from prefect_stitch.credentials import StitchCredentials
 from prefect_stitch.tasks import (
     start_replication_job
 )
@@ -33,8 +35,11 @@ from prefect_stitch.tasks import (
 
 @flow
 def example_flow():
+    creds = StitchCredentials(
+        access_token=SecretStr("my_secret_token")
+    )
     start_replication_job(
-        access_token="my_secret_token",
+        credentials=creds,
         source_id=1234
     )
 
